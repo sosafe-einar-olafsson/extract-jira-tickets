@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Check for the --issuekey flag
+ISSUEKEY_FLAG=false
+if [[ "$1" == "--issuekey" ]]; then
+  ISSUEKEY_FLAG=true
+  shift # Remove the --issuekey argument so we can access the start and end tags
+fi
+
+# Define the start and end tags
+START_TAG=$1
+END_TAG=$2
+
+# Check if both tags are provided
+if [ -z "$START_TAG" ] || [ -z "$END_TAG" ]; then
+  echo "Usage: $0 [--issuekey] <start-tag> <end-tag>"
+  exit 1
+fi
+
+# Run git log to get commit messages between tags, extract Jira tickets, and output in the specified format
+jira_tickets=$(git log "$START_TAG".."$END_TAG" --pretty=format:"%s" | \
+grep -Eo '\b[A-Z]{2,3}-[0-9]+\b' | \
+sort | uniq | \
+paste -sd ',' -)
+
+# Wrap output in "issuekey in (...)" if the --issuekey flag is used
+if $ISSUEKEY_FLAG; then
+  echo "issuekey in ($jira_tickets)"
+else
+  echo "$jira_tickets"
+fi

@@ -32,7 +32,7 @@ extract-jira-tickets <start-tag> <end-tag> [--issuekey]
    Use the `--issuekey` flag if you want the output formatted as a Jira query, which is helpful for searching within Jira:
 
    ```bash
-   extract-jira-tickets v1.0 v1.1 --issuekey
+   extract-jira-tickets --issuekey v1.0 v1.1
    ```
 
    Output:
